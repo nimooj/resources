@@ -10,6 +10,7 @@
 #include <algorithm>
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include <tuple>
 
 //#include "json.h"
 #include "Vertex.h"
@@ -23,9 +24,9 @@
 #define CLAVICLER 4
 #define SHOULDERL 5
 #define SHOULDERR 6
-#define BELLYBUTTON 7
-#define WRISTL 8
-#define WRISTR 9
+#define WRISTL 7
+#define WRISTR 8
+#define BELLYBUTTON 9
 #define PELVISMID 10
 #define PELVISL 11
 #define PELVISR 12
@@ -45,21 +46,26 @@
 #define ARMS 23
 #define LEGS 24
 
-
 using namespace std;
 
 class Body {
 public :
 	Body();
 	~Body();
+	vector<Vertex> nipples;
 
 	int bustIdx;
 	int waistIdx;
 	int hipIdx;
+	int shoulderTopIdx;
+	int shoulderMidIdx;
+	int shoulderBottomIdx;
 
 	float bust;
 	float waist;
 	float hip;
+
+	Vertex thighMax;
 
 	int GetLayerNum();
 	LinkedList<vector<Vertex>>* layers;
@@ -73,24 +79,32 @@ public :
 	vector<Vertex> severBody(int); // separate parts from (whole) vertices
 	vector<Vertex> severBody(int, vector<Vertex>); // separate parts from (whole) vertices
 
+	vector<Vertex> alignY(vector<Vertex>);
+
 	vector<int> GetLayerIdx();
 	float GetCircumference(vector<Vertex>);
 
 	void GetWholeConvexHull();
 	void GetDressForm(vector<Vertex>);
+	void GetCircularDressForm(vector<Vertex>);
+
+	void GetIndex(vector<Vertex>);
+
 	void WriteToOBJ();
 
 	void SetSize(float, float, float);
 	void SetDressSize(float);
 
-	void ExpandDress();
-	
 private:
 	float expand;
 	float interval;
 	vector<Vertex> vertices;
 	vector<Vertex> joints;
 	//vector<JSONVertex> jointGroup;
+
+
+	Vertex nippleL;
+	Vertex nippleR;
 
 	vector<float> circs;
 
@@ -105,12 +119,12 @@ private:
 	void getArmholeOutline();
 
 	void setInterval(float);
-	void separateSections(vector<Vertex>, float); // Flatten and separates layers with the float interval given
 
 	bool importVertices();
 	bool importJoints();
 
-	vector<Vertex> sweep(int, vector<Vertex>);
+	vector<Vertex> generateUniformLayer(vector<Vertex>);
+	vector<Vertex> sweep(int, vector<Vertex>, vector<Vertex>);
 
 	bool isArmhole(int);
 	bool isArmhole(Vertex);

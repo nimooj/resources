@@ -57,6 +57,12 @@
     <ClInclude Include="SurfaceGeneration.h">
       <Filter>Main</Filter>
     </ClInclude>
+    <ClInclude Include="ObjBody.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DressForm.cpp">
@@ -81,6 +87,12 @@
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="json.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjBody.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
       <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>
