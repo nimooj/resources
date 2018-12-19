@@ -39,12 +39,18 @@
 #define WITHHEAD 13
 #define FOOTLESS 14
 #define WITHFOOT 15
+#define LOWERBODY 16
 
 #define HEAD 20
 #define NECK 21
 #define TORSO 22
 #define ARMS 23
 #define LEGS 24
+
+#define DRESS 30
+#define TOP 31
+#define SKIRT 32
+#define PANTS 33
 
 using namespace std;
 
@@ -69,54 +75,37 @@ public :
 
 	int GetLayerNum();
 	LinkedList<vector<Vertex>>* layers;
-	vector<Vertex> armholesL;
-	vector<Vertex> armholesR;
-	vector<int> armholeIdx;
 
 	vector<Vertex> GetVertices();
 	vector<Vertex> GetJoints();
 
 	vector<Vertex> severBody(int); // separate parts from (whole) vertices
-	vector<Vertex> severBody(int, vector<Vertex>); // separate parts from (whole) vertices
-
-	vector<Vertex> alignY(vector<Vertex>);
 
 	vector<int> GetLayerIdx();
+
 	float GetCircumference(vector<Vertex>);
+	void GetLooseDressForm(vector<Vertex>);
+	void GetTightDressForm(vector<Vertex>);
 
-	void GetWholeConvexHull();
-	void GetDressForm(vector<Vertex>);
-	void GetCircularDressForm(vector<Vertex>);
-
-	void GetIndex(vector<Vertex>);
-
-	void WriteToOBJ();
+	void GetTop(vector<Vertex>);
+	void GetSkirt(vector<Vertex>);
+	void GetPants(vector<Vertex>);
 
 	void SetSize(float, float, float);
-	void SetDressSize(float);
+
+	void WriteToOBJ(int);
+
 
 private:
 	float expand;
 	float interval;
 	vector<Vertex> vertices;
 	vector<Vertex> joints;
-	//vector<JSONVertex> jointGroup;
-
-
-	Vertex nippleL;
-	Vertex nippleR;
 
 	vector<float> circs;
 
-	vector<Vertex> armless;
-	vector<Vertex> arms;
-
 	int layerNum;
 	vector<int> layerIdx;
-
-	vector<int> armholeLIdx;
-	vector<int> armholeRIdx;
-	void getArmholeOutline();
 
 	void setInterval(float);
 
@@ -124,9 +113,4 @@ private:
 	bool importJoints();
 
 	vector<Vertex> generateUniformLayer(vector<Vertex>);
-	vector<Vertex> sweep(int, vector<Vertex>, vector<Vertex>);
-
-	bool isArmhole(int);
-	bool isArmhole(Vertex);
-	vector<Vertex> alignArmholes(vector<Vertex>);
 };

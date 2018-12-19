@@ -105,36 +105,83 @@ bool Body::importJoints() {
 	string s;
 	f.open("makehuman/Result/joints.txt");
 
+	vector<string> jnames;
+	vector<Vertex> tmpjoints;
+
 	if (f.is_open()) {
 		while (getline(f, s)) {
 			istringstream iss(s);
+			string jname;
 			Vertex v;
-			iss >> v.x >> v.y >> v.z;
+			iss >> jname >> v.x >> v.y >> v.z;
 			v.set();
 
 			v.x = (int)(v.x * 1000) / 1000.0f;
 			v.y = (int)(v.y * 1000) / 1000.0f;
 			v.z = (int)(v.z * 1000) / 1000.0f;
 
-			joints.push_back(v);
+			jnames.push_back(jname);
+			tmpjoints.push_back(v);
 		}
 	}
 	else return false;
 
 	// Sort by descending order
-	sort(joints.begin(), joints.end(), [](Vertex &a, Vertex &b) { if (a.y == b.y) return a.x > b.x; else return a.y > b.y; });
 
-	// Callibrate bellybutton & wrists
-	// When belly button is higher than wrists level
-	if (joints[8].y == joints[9].y) {
-		Vertex tmp_bellybutton = joints[7];
-		joints[7] = joints[8];
-		joints[8] = joints[9];
-		joints[9] = tmp_bellybutton;
+	//joints.reserve(tmpjoints.size());
+	joints.resize(tmpjoints.size());
+
+	for (int i = 0; i < jnames.size(); i++) {
+		string name = jnames[i];
+		if (name == "NECKHIGH")
+			joints[NECKHIGH] = tmpjoints[i];
+
+		if (name == "NECKMID")
+			joints[NECKMID] = tmpjoints[i];
+
+		if (name == "NECKLOW")
+			joints[NECKLOW] = tmpjoints[i];
+
+		if (name == "CLAVICLEL")
+			joints[CLAVICLEL] = tmpjoints[i];
+
+		if (name == "CLAVICLER")
+			joints[CLAVICLER] = tmpjoints[i];
+
+		if (name == "SHOULDERL")
+			joints[SHOULDERL] = tmpjoints[i];
+
+		if (name == "SHOULDERR")
+			joints[SHOULDERR] = tmpjoints[i];
+
+		if (name == "WRISTL")
+			joints[WRISTL] = tmpjoints[i];
+
+		if (name == "WRISTR")
+			joints[WRISTR] = tmpjoints[i];
+
+		if (name == "BELLYBUTTON")
+			joints[BELLYBUTTON] = tmpjoints[i];
+
+		if (name == "PELVISMID")
+			joints[PELVISMID] = tmpjoints[i];
+
+		if (name == "PELVISL")
+			joints[PELVISL] = tmpjoints[i];
+
+		if (name == "PELVISR")
+			joints[PELVISR] = tmpjoints[i];
+
+		if (name == "ANKLEL")
+			joints[ANKLEL] = tmpjoints[i];
+
+		if (name == "ANKLER")
+			joints[ANKLER] = tmpjoints[i];
 	}
 
 	f.close();
 
+	//sort(joints.begin(), joints.end(), [](Vertex &a, Vertex &b) { if (a.y == b.y) return a.x > b.x; else return a.y > b.y; });
 	return true;
 }
 
@@ -158,21 +205,6 @@ vector<Vertex> Body::severBody(int process) {
 
 			break;
 
-		case WITHARM : 
-			break;
-		
-		case HEADLESS:
-			break;
-
-		case WITHHEAD :
-			break;
-
-		case HEAD :
-			break;
-			
-		case NECK :
-			break;
-
 		case TORSO: 
 			if (vertices.size() == 0 || joints.size() == 0) break;
 			thighMax = Vertex();
@@ -191,8 +223,8 @@ vector<Vertex> Body::severBody(int process) {
 					result.push_back(Vertex(x*scale, y + callibrateY, (z + callibrateZ)*scale));
 					//result.push_back(Vertex(x, y, z));
 				}
-				//else if (y <= joints[BELLYBUTTON].y && y > joints[PELVISL].y - 0.5 && x >= (joints[WRISTR].x + joints[SHOULDERR].x) / 2 && x <= (joints[WRISTL].x + joints[SHOULDERL].x) / 2) {
-				else if (y <= joints[BELLYBUTTON].y && y > ((joints[PELVISL].y + joints[ANKLEL].y)/2) && x >= (joints[WRISTR].x + joints[SHOULDERR].x) / 2 && x <= (joints[WRISTL].x + joints[SHOULDERL].x) / 2) {
+				//if (y <= joints[BELLYBUTTON].y && y > joints[PELVISL].y - 0.5 && x >= (joints[WRISTR].x + joints[SHOULDERR].x) / 2 && x <= (joints[WRISTL].x + joints[SHOULDERL].x) / 2) {
+				if (y <= joints[BELLYBUTTON].y && y > (joints[PELVISL].y + joints[ANKLEL].y)/2 && x >= (joints[WRISTR].x + joints[SHOULDERR].x) / 2 && x <= (joints[WRISTL].x + joints[SHOULDERL].x) / 2) {
 					result.push_back(Vertex(x*scale, y + callibrateY, (z + callibrateZ)*scale));
 					//result.push_back(Vertex(x, y, z));
 				}
@@ -204,10 +236,73 @@ vector<Vertex> Body::severBody(int process) {
 			}
 			break;
 
-		case ARMS :
+		case FOOTLESS :
+			if (vertices.size() == 0 || joints.size() == 0) break;
+			thighMax = Vertex();
+			thighMax.z = -5;
+
+			for (vector<Vertex>::iterator it = vertices.begin(); it != vertices.end(); it++) {
+				float x, y, z;
+				x = (*it).x;
+				y = (*it).y;
+				z = (*it).z;
+				float scale = 1.065; 
+				float callibrateY = 0.11;
+				float callibrateZ = 0.03;
+
+				if (y < joints[NECKMID].y && y > joints[BELLYBUTTON].y && x >= joints[SHOULDERR].x && x <= joints[SHOULDERL].x) {
+					result.push_back(Vertex(x*scale, y + callibrateY, (z + callibrateZ)*scale));
+					//result.push_back(Vertex(x, y, z));
+				}
+				//if (y <= joints[BELLYBUTTON].y && y > joints[PELVISL].y - 0.5 && x >= (joints[WRISTR].x + joints[SHOULDERR].x) / 2 && x <= (joints[WRISTL].x + joints[SHOULDERL].x) / 2) {
+				if (y <= joints[BELLYBUTTON].y && y > joints[ANKLEL].y && x >= (joints[WRISTR].x + joints[SHOULDERR].x) / 2 && x <= (joints[WRISTL].x + joints[SHOULDERL].x) / 2) {
+					result.push_back(Vertex(x*scale, y + callibrateY, (z + callibrateZ)*scale));
+					//result.push_back(Vertex(x, y, z));
+				}
+
+				if (y <= joints[PELVISL].y) {
+					if (z > thighMax.z)
+						thighMax = Vertex(x, y, z);
+				}
+			}
+			break;
+
+		case LOWERBODY :
+			if (vertices.size() == 0 || joints.size() == 0) break;
+			thighMax = Vertex();
+			thighMax.z = -5;
+
+			for (vector<Vertex>::iterator it = vertices.begin(); it != vertices.end(); it++) {
+				float x, y, z;
+				x = (*it).x;
+				y = (*it).y;
+				z = (*it).z;
+				float scale = 1.065; 
+				float callibrateY = 0.11;
+				float callibrateZ = 0.03;
+
+				if (y <= joints[BELLYBUTTON].y && y > joints[ANKLEL].y && x >= (joints[WRISTR].x + joints[SHOULDERR].x) / 2 && x <= (joints[WRISTL].x + joints[SHOULDERL].x) / 2) {
+					result.push_back(Vertex(x*scale, y + callibrateY, (z + callibrateZ)*scale));
+				}
+			}
 			break;
 
 		case LEGS :
+			if (vertices.size() == 0 || joints.size() == 0) break;
+
+			for (vector<Vertex>::iterator it = vertices.begin(); it != vertices.end(); it++) {
+				float x, y, z;
+				x = (*it).x;
+				y = (*it).y;
+				z = (*it).z;
+				float scale = 1.065; 
+				float callibrateY = 0.11;
+				float callibrateZ = 0.03;
+
+				if (y <= joints[BELLYBUTTON].y && y > joints[ANKLEL].y && x >= (joints[WRISTR].x + joints[SHOULDERR].x) / 2 && x <= (joints[WRISTL].x + joints[SHOULDERL].x) / 2) {
+					result.push_back(Vertex(x*scale, y + callibrateY, (z + callibrateZ)*scale));
+				}
+			}
 			break;
 		
 		default :
@@ -216,88 +311,6 @@ vector<Vertex> Body::severBody(int process) {
 		}
 
 	return result;
-}
-
-vector<Vertex> Body::severBody(int process, vector<Vertex> v) {
-	vector<Vertex> result;
-
-	switch (process) {
-		case ARMLESS :
-			if (v.size() == 0 || joints.size() == 0) break;
-		
-			for (vector<Vertex>::iterator it = v.begin(); it != v.end(); it++) {
-				float x, y, z;
-				x = (*it).x;
-				y = (*it).y;
-				z = (*it).z;
-
-				if (x >= joints[SHOULDERR].x && x <= joints[SHOULDERL].x) { // Only for non-obese type for now.
-					result.push_back(Vertex(x, y, z));
-				}
-			}
-
-			break;
-
-		case WITHARM : 
-			break;
-		
-		case HEADLESS:
-			if (v.size() == 0 || joints.size() == 0) break;
-		
-			for (vector<Vertex>::iterator it = v.begin(); it != v.end(); it++) {
-				float x, y, z;
-				x = (*it).x;
-				y = (*it).y;
-				z = (*it).z;
-
-				if (y <= joints[NECKMID].y) {
-					result.push_back(Vertex(x, y, z));
-				}
-			}
-
-			break;
-
-		case WITHHEAD :
-			break;
-
-		case FOOTLESS:
-			if (v.size() == 0 || joints.size() == 0) break;
-		
-			for (vector<Vertex>::iterator it = v.begin(); it != v.end(); it++) {
-				float x, y, z;
-				x = (*it).x;
-				y = (*it).y;
-				z = (*it).z;
-
-				if (y >= joints[ANKLEL].y) {
-					result.push_back(Vertex(x, y, z));
-				}
-			}
-			break;
-
-		case WITHFOOT: 
-			break;
-
-		default :
-			break;
-
-		}
-
-	return result;
-}
-
-vector<Vertex> Body::alignY(vector<Vertex> v) {
-	float l = v[0].y;
-	for (int i = 0; i < v.size(); i++) {
-		if (v[i].y > l - interval) {
-			v[i].y = l; 
-		}
-		else {
-			l -= interval;
-		}
-	}
-
-	return v;
 }
 
 vector<Vertex> Body::GetVertices() {
@@ -335,366 +348,14 @@ float Body::GetCircumference(vector<Vertex> v) {
 	return circum * 10;
 }
 
-void Body::GetWholeConvexHull() {
-	layers = new LinkedList<vector<Vertex>>();
-
-	// Generate convex hull for each layers but the topmost one
-	for (int i = 1; i < layerNum - 1; i++) {
-		vector<Vertex> layerVerts;
-
-		// push vertices in layer
-		for (int j = layerIdx[i]; j < layerIdx[i + 1]; j++) {
-			layerVerts.push_back(vertices[j]);
-		}
-
-		// Draw convex hull
-		GrahamScan g = GrahamScan(layerVerts);
-		vector<Vertex> convexedLayer(g.GenerateConvexHull());
-		layers->append(convexedLayer);
-	}
-}
-
-void Body::SetDressSize(float e) {
-	expand = e;
-}
-
-void Body::GetDressForm(vector<Vertex> v) {
-	// Get layers from already flattened v
-	vector<Vertex> layerVerts;
-
-	int idx = 0;
-	int tl = v[0].y * 100;
-	float l = tl/100.0f;
-	float diff = 0.15;
-
-	layers = new LinkedList<vector<Vertex>>();
-	LinkedList<vector<Vertex>>* tmp = new LinkedList<vector<Vertex>>();
-	int count = 0;
-
-	// 1. Get ellipse & circumferences of each convexhulls
-	for (vector<Vertex>::iterator it = v.begin(); it != v.end(); it++ ) {
-		float x = (*it).x;
-		float y = (*it).y;
-		float z = (*it).z;
-
-		if (y > l - diff && l < l + diff) { // Add verts to the layer
-			layerVerts.push_back(Vertex(x, l, z));
-			count++;
-		}
-		else { // Generate layer
-			if (count > 0) { // When more than one vertex in the layer
-				GrahamScan g = GrahamScan(layerVerts);
-				vector<Vertex> convexedLayer(g.GenerateConvexHull());
-
-				vector<Vertex> ellipse = sweep(idx, convexedLayer, layerVerts);
-				float currCirc = GetCircumference(ellipse);
-
-
-				/*
-				vector<Vertex> subEllipse;
-				if (circs.size() > 0) {
-					// Generate sub layer for smoothness
-					int div = 2;
-
-					for (int i = div; i > 0; i--) {
-						for (int j = 0; j < ellipse.size(); j++) {
-							//float xDiff = (layers->curr->value[j].x - ellipse[j].x) * i/div;
-							//float zDiff = (layers->curr->value[j].z - ellipse[j].z) * i/div;
-							float xDiff = (tmp->curr->value[j].x - ellipse[j].x) * i/div;
-							float zDiff = (tmp->curr->value[j].z - ellipse[j].z) * i/div;
-							subEllipse.push_back(Vertex(ellipse[j].x + xDiff, ellipse[j].y + interval * i / div, ellipse[j].z + zDiff));
-						}
-
-						//layers->append(subEllipse);
-						tmp->append(subEllipse);
-						circs.push_back(GetCircumference(subEllipse));
-
-						subEllipse.clear();
-					}
-				}
-				*/
-
-				circs.push_back(currCirc); // Do not save sub layers circumference
-
-				float secondtolastIdx = 0;
-				if (circs.size() > 1) {
-					secondtolastIdx = circs.size() - 2;
-				}
-
-				tmp->append(ellipse);
-			}
-
-			layerVerts.clear();
-			l -= interval;
-			count = 0;
-		}
-		idx++;
-	}
-
-	float minimum = 100;
-	int minIdx = 0;
-	float maximum1 = 0, maximum2 = 0;
-	int maxIdx1 = 0, maxIdx2 = 0;
-
-	for (int i = 1; i < circs.size(); i++) {
-		if (i < circs.size() / 2 && circs[i] > maximum1) {
-			maximum1 = circs[i];
-			maxIdx1 = i;
-		}
-
-		if (circs[i] < minimum && i > maxIdx1) {
-			minimum = circs[i];
-			minIdx = i;
-		}
-
-		if (i > circs.size() / 2 && circs[i] > maximum2) {
-			maxIdx2 = i;
-			maximum2 = circs[i];
-		}
-	}
-
-	bustIdx = maxIdx1 + 1;
-	waistIdx = minIdx;
-	hipIdx = maxIdx2;
-
-	cout << bustIdx << ", " << waistIdx << ", " << hipIdx << endl;
-
-	// 2. Extract neck(top-most), bust, hip, waist
-	tmp->curr = tmp->head;
-	for (int i = 0; i < tmp->length; i++) {
-		if (i == 0) {
-			// Heighten collar level
-			//for (int j = 0; j < tmp->curr->value.size(); j++) {
-				//tmp->curr->value[j].y += 0.15;
-			//}
-			layers->append(tmp->curr->value);
-		}
-		else if (i == bustIdx) {
-			layers->append(tmp->curr->value);
-			bust = GetCircumference(tmp->curr->value);
-		}
-		else if (i == waistIdx) {
-			layers->append(tmp->curr->value);
-			waist = GetCircumference(tmp->curr->value);
-		}
-		else if (i == hipIdx) {
-			layers->append(tmp->curr->value);
-			hip = GetCircumference(tmp->curr->value);
-		}
-		else {
-			layers->append(tmp->curr->value);
-		}
-
-		tmp->curr = tmp->curr->next;
-	}
-	delete tmp;
-	 
-	/* Expand dress */
-	vector<Vertex> lastLayer = layers->curr->value;
-	vector<Vertex> tail;
-	l = lastLayer[0].y;
-	while (l >= joints[ANKLEL].y - interval) {
-		for (int i = 0; i < lastLayer.size(); i++) {
-			tail.push_back(Vertex(lastLayer[i].x * expand, l, lastLayer[i].z * expand));
-		}
-		layers->append(tail);
-		l -= interval;
-		tail.clear();
-	}
-	/* *** */
-
-	ifstream sizeFile("makehuman/Result/sizes.txt");
-	vector<string> st;
-
-	string line;
-	while (getline(sizeFile, line)) {
-		istringstream iss(line);
-		st.push_back(line);
-	}
-
-	SetSize(atof(st[2].c_str()), atof(st[3].c_str()), atof(st[4].c_str()));
-}
-
-void Body::GetCircularDressForm(vector<Vertex> v) {
-	vector<Vertex> layerVerts;
-	float l = (v[0].y * 100)/100.0f + interval;
-
-	layers = new LinkedList<vector<Vertex>>();
-	LinkedList<vector<Vertex>>* tmp = new LinkedList<vector<Vertex>>();
-	int count = 0;
-
-	float radius = 3.0f;
-	vector<Vertex> circle;
-	for (int degree = 0; degree < 360; degree += 10) {
-		float radian = (degree* M_PI) / 180;
-		float cx = radius * cos(radian);
-		float cy = l;
-		float cz = radius * sin(radian);
-		circle.push_back(Vertex(cx, cy, cz));
-	}
-
-	Vertex maxX = Vertex(), maxZ = Vertex(), minX = Vertex(), minZ = Vertex();
-	maxX.x = -5;
-	maxZ.z = -5;
-	minX.x = 5;
-	minZ.z = 5;
-	// 1. Get ellipse & circumferences of each convexhulls
-	for (vector<Vertex>::iterator it = v.begin(); it != v.end(); it++ ) {
-		float x = (*it).x;
-		float y = (*it).y;
-		float z = (*it).z;
-
-		if (y >= l) { // Add verts to the layer
-			//layerVerts.push_back(Vertex(x, l - interval*2/3, z));
-			layerVerts.push_back(Vertex(x, l, z));
-			if (x > maxX.x) maxX.set(x, l, z);
-			if (z > maxZ.z) maxZ.set(x, l, z);
-			if (x < minX.x) minX.set(x, l, z);
-			if (z < minZ.z) minZ.set(x, l, z);
-			count++;
-		}
-		else { // Generate layer
-			if (count > 0) { // When more than one vertex in the layer
-				vector<Vertex> preEllipse;
-				vector<Vertex> ellipse;
-				// Get center
-				Vertex Center = Vertex((minX.x + maxX.x)/2, l, (minZ.z + maxZ.z)/2);
-
-				// Get top Dists from center from layerVerts
-				vector<tuple<float, int>> dists;
-				for (int i = 0; i < layerVerts.size(); i++) {
-					dists.push_back(make_tuple(Center.distance(layerVerts[i]), i));
-				}
-				// sort by descending dists
-				sort(dists.begin(), dists.end(), [](tuple<float, int> a, tuple<float, int> b) {return get<0>(a) > get<0>(b); });
-				int topDists = 36;
-				if (dists.size() < topDists)
-					topDists = dists.size();
-
-				for (int i = 0; i < topDists; i++) {
-					preEllipse.push_back(layerVerts[get<1>(dists[i])]);
-				}
-
-
-				for (int i = 0; i < circle.size(); i++) {
-					Vertex closest = circle[i].closest(preEllipse);
-					ellipse.push_back(closest);
-					circle[i].y -= interval;
-				}
-
-				float currCirc = GetCircumference(ellipse);
-
-				circs.push_back(currCirc); // Do not save sub layers circumference
-
-				tmp->append(ellipse);
-			}
-
-			layerVerts.clear();
-			l -= interval;
-			count = 0;
-			maxX.del();
-			maxZ.del();
-			minX.del();
-			minZ.del();
-			maxX.x = -5;
-			maxZ.z = -5;
-			minX.x = 5;
-			minZ.z = 5;
-		}
-	}
-
-	float minimum = 100;
-	int minIdx = 0;
-	float maximum1 = 0, maximum2 = 0;
-	int maxIdx1 = 0, maxIdx2 = 0;
-
-	for (int i = 1; i < circs.size(); i++) {
-		if (i < circs.size() / 2 && circs[i] > maximum1) {
-			maximum1 = circs[i];
-			maxIdx1 = i;
-		}
-		if (circs[i] < minimum && i > maxIdx1) {
-			minimum = circs[i];
-			minIdx = i;
-		}
-
-		if (i > circs.size() / 2 && circs[i] > maximum2) {
-			maxIdx2 = i;
-			maximum2 = circs[i];
-		}
-	}
-
-	bustIdx = maxIdx1 + 1;
-	waistIdx = minIdx;
-	hipIdx = maxIdx2;
-
-	//cout << bustIdx << ", " << waistIdx << ", " << hipIdx << endl;
-
-	// 2. Extract neck(top-most), bust, hip, waist
-	tmp->curr = tmp->head;
-	for (int i = 0; i < tmp->length; i++) {
-		if (i == 0) {
-			// Heighten collar level
-			//for (int j = 0; j < tmp->curr->value.size(); j++) {
-				//tmp->curr->value[j].y += 0.15;
-			//}
-			layers->append(tmp->curr->value);
-		}
-		else if (i == bustIdx) {
-			layers->append(tmp->curr->value);
-			bust = GetCircumference(tmp->curr->value);
-		}
-		else if (i == waistIdx) {
-			layers->append(tmp->curr->value);
-			waist = GetCircumference(tmp->curr->value);
-		}
-		else if (i == hipIdx) {
-			layers->append(tmp->curr->value);
-			hip = GetCircumference(tmp->curr->value);
-		}
-		else {
-			layers->append(tmp->curr->value);
-		}
-
-		tmp->curr = tmp->curr->next;
-	}
-	delete tmp;
-	 
-	/* Expand dress */
-	/*
-	vector<Vertex> lastLayer = layers->curr->value;
-	vector<Vertex> tail;
-	while (l >= joints[ANKLEL].y - interval) {
-		for (int i = 0; i < lastLayer.size(); i++) {
-			tail.push_back(Vertex(lastLayer[i].x * expand, l, lastLayer[i].z * expand));
-		}
-		layers->append(tail);
-		l -= interval;
-		tail.clear();
-	}
-	*/
-	/* *** */
-
-	ifstream sizeFile("makehuman/Result/sizes.txt");
-	vector<string> st;
-
-	string line;
-	while (getline(sizeFile, line)) {
-		istringstream iss(line);
-		st.push_back(line);
-	}
-
-	//SetSize(atof(st[2].c_str()), atof(st[3].c_str()), atof(st[4].c_str()));
-}
-
-void Body::GetIndex(vector<Vertex> v) {
+void Body::GetLooseDressForm(vector<Vertex> v) {
 	int idx = 0;
 	float l = v[0].y;
 	float diff = 0.15;
 	float bustHeight = 0;
 	float hipHeight = 0;
 	vector<Vertex> layerVerts;
-	vector<Vertex> bustVecs, accum2;
+	vector<Vertex> bustVecs, skirt;
 	layers = new LinkedList<vector<Vertex>>();
 
 	float bustLv = (joints[NECKMID].y + joints[BELLYBUTTON].y) / 2;
@@ -702,8 +363,7 @@ void Body::GetIndex(vector<Vertex> v) {
 	float shoulderBottomLv = (joints[SHOULDERL].y + (joints[NECKMID].y + joints[BELLYBUTTON].y) / 2) / 2;
 	float shoulderMidLv = (shoulderTopLv + shoulderBottomLv) / 2;
 	int shoulderTopMidIdx = -1, shoulderMidBottomIdx = -1, shoulderBottomBustIdx = -1;
-
-
+	
 	for (vector<Vertex>::iterator it = v.begin(); it != v.end(); it++) {
 		float x = (*it).x;
 		float y = (*it).y;
@@ -734,7 +394,7 @@ void Body::GetIndex(vector<Vertex> v) {
 			if (waistIdx == -1 && abs(l - (joints[PELVISMID].y + joints[CLAVICLEL].y)/2) < diff) {
 				waistIdx = idx;
 			}
-			if (hipIdx == -1 && abs(l - joints[PELVISMID].y) < diff) {
+			if (hipIdx == -1 && (abs(l - joints[PELVISMID].y) <= diff || l <= joints[PELVISMID].y + diff)) {
 				hipIdx = idx;
 			}
 			layerVerts.push_back(Vertex(x, l, z));
@@ -742,41 +402,55 @@ void Body::GetIndex(vector<Vertex> v) {
 		else {
 			vector<Vertex> ellipse;
 			if (idx == 0) {
+				/*
+				*/
 				ellipse = generateUniformLayer(layerVerts);
 				circs.push_back(GetCircumference(ellipse));
 				layers->append(ellipse);
 			}
-			else if (idx == shoulderTopIdx) {
+			if (idx == shoulderTopIdx) {
 				ellipse = generateUniformLayer(layerVerts);
 				circs.push_back(GetCircumference(ellipse));
 				layers->append(ellipse);
 			}
-			else if (idx == shoulderTopMidIdx) {
+			if (idx == shoulderTopMidIdx) {
+				/*
+				*/
 				ellipse = generateUniformLayer(layerVerts);
 				circs.push_back(GetCircumference(ellipse));
 				layers->append(ellipse);
 			}
-			else if (idx == shoulderMidIdx) {
+			if (idx == shoulderMidIdx) {
+				/*
+				*/
 				ellipse = generateUniformLayer(layerVerts);
 				circs.push_back(GetCircumference(ellipse));
 				layers->append(ellipse);
 			}
-			else if (idx == shoulderMidBottomIdx) {
+			if (idx == shoulderMidBottomIdx) {
+				/*
+				*/
 				ellipse = generateUniformLayer(layerVerts);
 				circs.push_back(GetCircumference(ellipse));
 				layers->append(ellipse);
 			}
-			else if (idx == shoulderBottomIdx) {
+			if (idx == shoulderBottomIdx) {
+				/*
+				*/
 				ellipse = generateUniformLayer(layerVerts);
 				circs.push_back(GetCircumference(ellipse));
 				layers->append(ellipse);
 			}
-			else if (idx == shoulderBottomBustIdx) {
+			if (idx == shoulderBottomBustIdx) {
+				/*
+				*/
 				ellipse = generateUniformLayer(layerVerts);
 				circs.push_back(GetCircumference(ellipse));
 				layers->append(ellipse);
 			}
-			else if (idx == bustIdx) {
+			if (idx == bustIdx) {
+				/*
+				*/
 				ellipse = generateUniformLayer(layerVerts);
 				bustHeight = ellipse[0].y;
 				bustVecs = ellipse;
@@ -784,33 +458,24 @@ void Body::GetIndex(vector<Vertex> v) {
 				circs.push_back(bust);
 				layers->append(ellipse);
 			}
-			else if (idx == waistIdx) {
+			if (idx == waistIdx) {
+				/*
+				*/
 				ellipse = generateUniformLayer(layerVerts);
 				waist = GetCircumference(ellipse);
 				circs.push_back(waist);
-				/*
-				layers->append(ellipse);
-				*/
 			}
-			else if (idx == hipIdx) {
+			if (idx == hipIdx) {
+				/*
+				*/
 				ellipse = generateUniformLayer(layerVerts);
 				hipHeight = ellipse[0].y;
 				hip = GetCircumference(ellipse);
 				circs.push_back(hip);
-				/*
-				layers->append(ellipse);
-				*/
-			}
-			else {
-				ellipse = generateUniformLayer(layerVerts);
-				circs.push_back(GetCircumference(ellipse));
-				/*
-				layers->append(ellipse);
-				*/
 			}
 
 			if (hipIdx != -1 && idx >= hipIdx) {
-				accum2.insert(accum2.end(), layerVerts.begin(), layerVerts.end());
+				skirt.insert(skirt.end(), layerVerts.begin(), layerVerts.end());
 			}
 
 			idx++;
@@ -819,10 +484,14 @@ void Body::GetIndex(vector<Vertex> v) {
 		}
 	}
 
-	for (int i = 0; i < accum2.size(); i++) {
-		accum2[i].y = hipHeight - diff * 2;
+	/*
+	*/
+	for (int i = 0; i < skirt.size(); i++) {
+		skirt[i].y = hipHeight - diff * 2;
 	}
-	vector<Vertex> hipVecs = generateUniformLayer(accum2);
+	vector<Vertex> hipL = generateUniformLayer(skirt);
+	vector<Vertex> hipVecs;
+	hipVecs.insert(hipVecs.end(), hipL.begin(), hipL.end());
 
 	l = bustHeight - diff * 2;
 
@@ -839,16 +508,17 @@ void Body::GetIndex(vector<Vertex> v) {
 		subEllipse.clear();
 	}
 
-	for (int i = 0; i < accum2.size(); i++) {
-		accum2[i].y = hipHeight - diff * 2;
+	/*
+	for (int i = 0; i < skirt.size(); i++) {
+		skirt[i].y = hipHeight - diff * 2;
 	}
+	*/
 
-	vector<Vertex> ellipse = generateUniformLayer(accum2);
+	vector<Vertex> ellipse = generateUniformLayer(skirt);
 	layers->append(ellipse);
 
 	l = hipHeight - diff * 4;
 
-	/* Expand dress */
 	expand = 1.01;
 	vector<Vertex> tail;
 	while (l >= joints[ANKLEL].y - diff) {
@@ -862,279 +532,358 @@ void Body::GetIndex(vector<Vertex> v) {
 		l -= diff * 2;
 		tail.clear();
 	}
-	/*
-	*/
-	/* *** */
-
-	/*
-	ifstream sizeFile("Result/sizes.txt");
-	vector<string> st;
-
-	string line;
-	while (getline(sizeFile, line)) {
-		istringstream iss(line);
-		st.push_back(line);
-	}
-
-	//SetSize(atof(st[2].c_str()), atof(st[3].c_str()), atof(st[4].c_str()));
-	*/
 
 	// Auto Export
-	WriteToOBJ();
+	WriteToOBJ(DRESS);
 }
 
-bool Body::isArmhole(int idx) {
-	for (int i = 0; i < armholeIdx.size(); i++) {
-		if (idx == armholeIdx[i])
-			return true;
-	}
-	return false;
-}
+void Body::GetTightDressForm(vector<Vertex> v) {
+	int idx = 0;
+	float l = v[0].y;
+	float diff = 0.15;
+	float bustHeight = 0;
+	float hipHeight = 0;
+	vector<Vertex> layerVerts;
+	layers = new LinkedList<vector<Vertex>>();
 
-bool Body::isArmhole(Vertex v) {
-	if (abs(v.x - joints[SHOULDERR].x) < 0.1 && v.y > joints[BELLYBUTTON].y) {
-		if (v.x <= 0)
-			armholesR.push_back(Vertex(v.x, v.y, v.z));
-		else
-			armholesL.push_back(Vertex(v.x, v.y, v.z));
-		return true;
-	}
-	else if (abs(v.x - joints[SHOULDERL].x) < 0.1 && v.y > joints[BELLYBUTTON].y) {
-		if (v.x <= 0)
-			armholesR.push_back(Vertex(v.x, v.y, v.z));
-		else
-			armholesL.push_back(Vertex(v.x, v.y, v.z));
-		return true;
-	}
-	return false;
-}
-
-vector<Vertex> Body::alignArmholes(vector<Vertex> v) {
-	float firstX = v[0].x;
-	float yVal = v[0].y;
-	if (v[0].x > 0) armholeLIdx.push_back(0);
-	else armholeRIdx.push_back(0);
-	vector<Vertex> r;
-
-	for (int i = 0; i < v.size(); i++) {
-		if (yVal != v[i].y) {
-			yVal = v[i].y;
-			if (v[i].x > 0) 
-				armholeLIdx.push_back(i);
-			else 
-				armholeRIdx.push_back(i);
-		}
-
-		r.push_back(Vertex(firstX, v[i].y, v[i].z));
-	}
-
-	if (v[v.size() - 1].x > 0) armholeLIdx.push_back(v.size() - 1);
-	else armholeRIdx.push_back(v.size() - 1);
-	return r;
-}
-
-void Body::getArmholeOutline() {
-
-	/***********************
-	* 1. Align xs' of the armholes.
-	* 2. Rotate armholes along with the z-axis (90 degrees).
-	* 3. Get outlines of the armholes.
-	* 4. Rotate back with z-axis (-90 degrees).
-	* 5. Replace armholesL, armholesR to outlineAL, outlineAR.
-	*************************/
-	vector<Vertex> nalignArmholesL = alignArmholes(armholesL);
-	vector<Vertex> nalignArmholesR = alignArmholes(armholesR);
-	vector<Vertex> outlineAL;
-	vector<Vertex> outlineAR;
-
-	Vertex minZL = Vertex(0, 0, 10);
-	Vertex maxZL = Vertex(0, 0, -10);
-	Vertex minZR = Vertex(0, 0, 10);
-	Vertex maxZR = Vertex(0, 0, -10);
-	float yLVal = nalignArmholesL[0].y;
-	float yRVal = nalignArmholesR[0].y;
-	// Identical sizes (armholesL && armholesR)
-	for (int i = 0; i < nalignArmholesL.size(); i++) {
-		// LEFT
-		if (i >= armholeLIdx[0] && i < armholeLIdx[1]) {
-			outlineAL.push_back(nalignArmholesL[i]);
-			yLVal = nalignArmholesL[armholeLIdx[1]].y;
-		}
-		else if (i >= armholeLIdx[armholeLIdx.size() - 2] && i <= armholeLIdx[armholeLIdx.size() - 1]) {
-			outlineAL.push_back(minZL);
-			outlineAL.push_back(maxZL);
-			outlineAL.push_back(nalignArmholesL[i]);
-		}
-		else {
-			if (yLVal != nalignArmholesL[i].y) {
-				yLVal = nalignArmholesL[i].y;
-				outlineAL.push_back(minZL);
-				outlineAL.push_back(maxZL);
-
-				minZL.set(0, 0, 10);
-				maxZL.set(0, 0, -10);
-			}
-
-			if (nalignArmholesL[i].z <= minZL.z) {
-				minZL = nalignArmholesL[i];
-			}
-			if (nalignArmholesL[i].z > maxZL.z) {
-				maxZL = nalignArmholesL[i];
-			}
-		}
-
-		// RIGHT
-		if (i >= armholeRIdx[0] && i < armholeRIdx[1]) {
-			outlineAR.push_back(nalignArmholesR[i]);
-			yRVal = nalignArmholesR[armholeRIdx[1]].y;
-		}
-		else if (i >= armholeRIdx[armholeRIdx.size() - 2] && i <= armholeRIdx[armholeRIdx.size() - 1]) {
-			outlineAR.push_back(minZR);
-			outlineAR.push_back(maxZR);
-			outlineAR.push_back(nalignArmholesR[i]);
-		}
-		else {
-			if (yRVal != nalignArmholesR[i].y) {
-				yRVal = nalignArmholesR[i].y;
-				outlineAR.push_back(minZR);
-				outlineAR.push_back(maxZR);
-
-				minZR.set(0, 0, 10);
-				maxZR.set(0, 0, -10);
-			}
-
-			if (nalignArmholesR[i].z <= minZR.z) {
-				minZR = nalignArmholesR[i];
-			}
-			if (nalignArmholesR[i].z > maxZR.z) {
-				maxZR = nalignArmholesR[i];
-			}
-		}
-	}
-	armholesL.clear();
-	armholesR.clear();
-	armholesL.insert(armholesL.begin(), outlineAL.begin(), outlineAL.end());
-	armholesR.insert(armholesR.begin(), outlineAR.begin(), outlineAR.end());
-}
-
-vector<Vertex> Body::sweep(int idx, vector<Vertex> v, vector<Vertex> d) {
-	vector<Vertex> c; 
-	vector<Vertex> quad2, quad4;
-	Vertex minX = Vertex(), maxX = Vertex(), minZ = Vertex(), maxZ = Vertex();
-	float yVal = v[0].y;
-
-	for (int i = 0; i < v.size(); i++) {
-		if (v[i].x < minX.x) {
-			minX = v[i];
-		}
-
-		if (v[i].x > maxX.x) {
-			maxX = v[i];
-		}
-
-		if (v[i].z < minZ.z) {
-			minZ = v[i];
-		}
-
-		if (v[i].z > maxZ.z) {
-			maxZ = v[i];
-		}
-
-		if (v[i].x > 0 && v[i].z < 0)
-			quad4.push_back(v[i]);
-
-		if (v[i].x < 0 && v[i].z > 0)
-			quad2.push_back(v[i]);
-	} 
-
-	Vertex center = Vertex((minX.x + maxX.x)/2, minX.y, (minZ.z + maxZ.z)/2);
-
-	Vertex v1 = maxX.subtract(center);
-	Vertex v2 = minZ.subtract(center);
-	if (v1.z != 0) v1.z = 0.0;
-	if (v2.x != 0) v2.x = 0.0;
-
-	float includedAngle = acos((v1.x*v2.x + v1.z*v2.z)/(sqrt(pow(v1.x, 2) + pow(v1.z, 2))*(sqrt(pow(v2.x, 2) + pow(v2.z, 2))))) * 180/M_PI; // degrees
-	if (includedAngle > 90) includedAngle = 90;
-
-	float a = sqrt(pow(v1.x, 2) + pow(v1.z, 2));
-	float b = sqrt(pow(v2.x, 2) + pow(v2.z, 2));
-
-	float maxDist = 0;
-	Vertex maxDistV;
-	int slice = 10;
-
-	// Quad 4
-	for (float degree = 0; degree < includedAngle + includedAngle/slice; degree += includedAngle/slice, idx++) {
-		float radian = (degree* M_PI) / 180;
-
-		float nx = a * cos(radian) + center.x;
-		float ny = yVal;
-		float nz = -b * sin(radian) + center.z;
-
-		Vertex newV = Vertex(nx, ny, nz);
-		/*
-		Vertex closest = newV.closest(quad4);
-		newV.x = closest.x;
-		newV.z = closest.z;
-		*/
+	float bustLv = (joints[NECKMID].y + joints[BELLYBUTTON].y) / 2;
+	float shoulderTopLv = (joints[SHOULDERL].y + joints[NECKMID].y) / 2;
+	float shoulderBottomLv = (joints[SHOULDERL].y + (joints[NECKMID].y + joints[BELLYBUTTON].y) / 2) / 2;
+	float shoulderMidLv = (shoulderTopLv + shoulderBottomLv) / 2;
+	int shoulderTopMidIdx = -1, shoulderMidBottomIdx = -1, shoulderBottomBustIdx = -1;
+	
+	for (vector<Vertex>::iterator it = v.begin(); it != v.end(); it++) {
+		float x = (*it).x;
+		float y = (*it).y;
+		float z = (*it).z;
 		
-		isArmhole(newV);
-		c.push_back(newV);
+		if (y >= l - diff && y < l + diff) {
+			if (bustIdx == -1 && abs(l - bustLv) < diff) {
+				bustIdx = idx;
+			}
+			/*
+			if (abs(l - shoulderTopLv) < diff) {
+				shoulderTopIdx = idx;
+			}
+			if (abs(l - (shoulderTopLv + shoulderMidLv)/2) < diff) {
+				shoulderTopMidIdx = idx;
+			}
+			if (abs(l - shoulderMidLv) < diff) {
+				shoulderMidIdx = idx;
+			}
+			if (abs(l - (shoulderBottomLv + shoulderMidLv)/2) < diff) {
+				shoulderMidBottomIdx = idx;
+			}
+			if (abs(l - shoulderBottomLv) < diff) {
+				shoulderBottomIdx = idx;
+			}
+			if (abs(l - (shoulderBottomLv + bustLv)/2) < diff) {
+				shoulderBottomBustIdx = idx;
+			}
+			*/
+			if (waistIdx == -1 && abs(l - (joints[PELVISMID].y + joints[CLAVICLEL].y)/2) < diff) {
+				waistIdx = idx;
+			}
+			if (hipIdx == -1 && (abs(l - joints[PELVISMID].y) <= diff || l <= joints[PELVISMID].y + diff)) {
+				hipIdx = idx;
+			}
+			layerVerts.push_back(Vertex(x, l, z));
+		}
+		else {
+			vector<Vertex> ellipse;
+			if (idx == 0) {
+				ellipse = generateUniformLayer(layerVerts);
+				circs.push_back(GetCircumference(ellipse));
+				layers->append(ellipse);
+			}
+			/*
+			if (idx == shoulderTopIdx) {
+				ellipse = generateUniformLayer(layerVerts);
+				circs.push_back(GetCircumference(ellipse));
+				layers->append(ellipse);
+			}
+			if (idx == shoulderTopMidIdx) {
+				ellipse = generateUniformLayer(layerVerts);
+				circs.push_back(GetCircumference(ellipse));
+				layers->append(ellipse);
+			}
+			if (idx == shoulderMidIdx) {
+				ellipse = generateUniformLayer(layerVerts);
+				circs.push_back(GetCircumference(ellipse));
+				layers->append(ellipse);
+			}
+			if (idx == shoulderMidBottomIdx) {
+				ellipse = generateUniformLayer(layerVerts);
+				circs.push_back(GetCircumference(ellipse));
+				layers->append(ellipse);
+			}
+			if (idx == shoulderBottomIdx) {
+				ellipse = generateUniformLayer(layerVerts);
+				circs.push_back(GetCircumference(ellipse));
+				layers->append(ellipse);
+			}
+			if (idx == shoulderBottomBustIdx) {
+				ellipse = generateUniformLayer(layerVerts);
+				circs.push_back(GetCircumference(ellipse));
+				layers->append(ellipse);
+			}
+			*/
+			if (idx == bustIdx) {
+				ellipse = generateUniformLayer(layerVerts);
+				bustHeight = ellipse[0].y;
+				bust = GetCircumference(ellipse);
+				circs.push_back(bust);
+				layers->append(ellipse);
+			}
+			else if (idx == waistIdx) {
+				ellipse = generateUniformLayer(layerVerts);
+				waist = GetCircumference(ellipse);
+				circs.push_back(waist);
+				layers->append(ellipse);
+			}
+			else if (idx == hipIdx) {
+				ellipse = generateUniformLayer(layerVerts);
+				hipHeight = ellipse[0].y;
+				hip = GetCircumference(ellipse);
+				circs.push_back(hip);
+				layers->append(ellipse);
+			}
+			else {
+				ellipse = generateUniformLayer(layerVerts);
+				if (ellipse.size() == 36)
+					layers->append(ellipse);
+			}
+
+			idx++;
+			l -= diff * 2;
+			layerVerts.clear();
+		}
 	}
 
-	int csize = c.size();
+	// Auto Export
+	WriteToOBJ(DRESS);
+}
 
-	// Quad 3	
-	for (int i = csize - 2; i >= 0; i--, idx++) {
-		Vertex newV = Vertex(-c[i].x, c[i].y, c[i].z);
-		isArmhole(newV);
-		c.push_back(newV);
+void Body::GetTop(vector<Vertex> v) {
+	int idx = 0;
+	float l = v[0].y;
+	float diff = 0.15;
+	float bustHeight = 0;
+	float hipHeight = 0;
+	vector<Vertex> layerVerts;
+	layers = new LinkedList<vector<Vertex>>();
+
+	float bustLv = (joints[NECKMID].y + joints[BELLYBUTTON].y) / 2;
+	
+	for (vector<Vertex>::iterator it = v.begin(); it != v.end(); it++) {
+		float x = (*it).x;
+		float y = (*it).y;
+		float z = (*it).z;
+
+		if (y >= l - diff && y < l + diff) {
+			if (bustIdx == -1 && abs(l - bustLv) < diff) {
+				bustIdx = idx;
+			}
+			if (waistIdx == -1 && abs(l - (joints[PELVISMID].y + joints[CLAVICLEL].y) / 2) < diff) {
+				waistIdx = idx;
+			}
+			if (hipIdx == -1 && (abs(l - joints[PELVISMID].y) <= diff || l <= joints[PELVISMID].y + diff)) {
+				hipIdx = idx;
+			}
+			layerVerts.push_back(Vertex(x, l, z));
+		}
+		else {
+			vector<Vertex> ellipse;
+			if (idx == 0) {
+				ellipse = generateUniformLayer(layerVerts);
+				circs.push_back(GetCircumference(ellipse));
+				layers->append(ellipse);
+			}
+			else if (idx == bustIdx) {
+				ellipse = generateUniformLayer(layerVerts);
+				bustHeight = ellipse[0].y;
+				bust = GetCircumference(ellipse);
+				circs.push_back(bust);
+				layers->append(ellipse);
+			}
+			else if (idx == waistIdx) {
+				ellipse = generateUniformLayer(layerVerts);
+				waist = GetCircumference(ellipse);
+				circs.push_back(waist);
+				layers->append(ellipse);
+			}
+			else if (idx == hipIdx) {
+				ellipse = generateUniformLayer(layerVerts);
+				hipHeight = ellipse[0].y;
+				hip = GetCircumference(ellipse);
+				circs.push_back(hip);
+				layers->append(ellipse);
+			}
+
+			if (hipHeight == 0) {
+				ellipse = generateUniformLayer(layerVerts);
+				if (ellipse.size() == 36)
+					layers->append(ellipse);
+			}
+
+			idx++;
+			l -= diff * 2;
+			layerVerts.clear();
+		}
 	}
 
-	// Quad 2
-	v1 = minX.subtract(center);
-	v2 = maxZ.subtract(center);
+	// Auto Export
+	WriteToOBJ(TOP);
+}
 
-	if (v1.z != 0) v1.z = 0.0;
-	if (v2.x != 0) v2.x = 0.0;
-	includedAngle = acos((v1.x*v2.x + v1.z*v2.z)/(sqrt(pow(v1.x, 2) + pow(v1.z, 2))*(sqrt(pow(v2.x, 2) + pow(v2.z, 2))))) * 180/M_PI; // degrees
-	if (includedAngle > 90) includedAngle = 90;
-	a = sqrt(pow(v1.x, 2) + pow(v1.z, 2));
-	b = sqrt(pow(v2.x, 2) + pow(v2.z, 2));
+void Body::GetSkirt(vector<Vertex> v) {
+	int idx = 0;
+	float l = v[0].y;
+	float diff = 0.15;
+	float bustHeight = 0;
+	float hipHeight = 0;
+	vector<Vertex> layerVerts;
+	layers = new LinkedList<vector<Vertex>>();
+	
+	for (vector<Vertex>::iterator it = v.begin(); it != v.end(); it++) {
+		float x = (*it).x;
+		float y = (*it).y;
+		float z = (*it).z;
+		
+		if (y >= l - diff && y < l + diff) {
+			if (waistIdx == -1) {
+				waistIdx = 0;
+			}
+			if (hipIdx == -1 && abs(l - joints[PELVISMID].y) <= diff) {
+				hipIdx = idx;
+			}
+			layerVerts.push_back(Vertex(x, l, z));
+		}
+		else {
+			vector<Vertex> ellipse;
+			if (idx == waistIdx) {
+				ellipse = generateUniformLayer(layerVerts);
+				waist = GetCircumference(ellipse);
+				circs.push_back(waist);
+				layers->append(ellipse);
+			}
+			else if (idx == hipIdx) {
+				ellipse = generateUniformLayer(layerVerts);
+				hipHeight = ellipse[0].y;
+				hip = GetCircumference(ellipse);
+				circs.push_back(hip);
+			}
 
-	vector<Vertex> c2;
+			if (idx > waistIdx && hipIdx == -1) {
+				vector<Vertex> a = layers->curr->value;
+				for (vector<Vertex>::iterator av = a.begin(); av != a.end(); av ++ ) {
+					(*av).y = l;
+				}
+				layerVerts.insert(layerVerts.end(), a.begin(), a.end());
+				ellipse = generateUniformLayer(layerVerts);
+				layers->append(ellipse);
+			}
 
-	for (float degree = 0; degree < includedAngle + includedAngle/slice; degree += includedAngle/slice, idx++) {
-		float radian = (degree* M_PI) / 180;
+			if (hipIdx != -1 && idx >= hipIdx) {
+				vector<Vertex> a = layers->curr->value;
+				for (vector<Vertex>::iterator av = a.begin(); av != a.end(); av ++ ) {
+					(*av).y = l;
+				}
+				layerVerts.insert(layerVerts.end(), a.begin(), a.end());
+				ellipse = generateUniformLayer(layerVerts);
+				layers->append(ellipse);
+			}
 
-		float nx = -a * cos(radian) + center.x;
-		float ny = yVal;
-		float nz = b * sin(radian) + center.z;
-
-		Vertex newV = Vertex(nx, ny, nz);
-		/*
-		Vertex closest = newV.closest(quad2);
-		newV.x = closest.x;
-		newV.z = closest.z;
-		*/
-
-		isArmhole(newV);
-		c2.push_back(newV);
+			idx++;
+			l -= diff * 2;
+			layerVerts.clear();
+		}
 	}
 
-	int c2size = c2.size();
+	// Auto Export
+	WriteToOBJ(SKIRT);
+}
 
-	// Quad 1
-	for (int i = c2size - 2; i >= 0; i--, idx++) {
-		Vertex newV = Vertex(-c2[i].x, c2[i].y, c2[i].z);
-		isArmhole(newV);
-		c2.push_back(newV);
+void Body::GetPants(vector<Vertex> v) {
+	int idx = 0;
+	float l = v[0].y;
+	float diff = 0.15;
+	float hipHeight = 0;
+	float crotchHeight = (3*joints[BELLYBUTTON].y + joints[ANKLEL].y)/4;
+	vector<Vertex> layerVerts;
+	vector<Vertex> legL, legR;
+	layers = new LinkedList<vector<Vertex>>();
+	
+	for (vector<Vertex>::iterator it = v.begin(); it != v.end(); it++) {
+		float x = (*it).x;
+		float y = (*it).y;
+		float z = (*it).z;
+		
+		if (y >= l - diff && y < l + diff) {
+			if (waistIdx == -1) {
+				waistIdx = 0;
+			}
+			if (hipIdx == -1 && abs(l - joints[PELVISMID].y) <= diff) {
+				hipIdx = idx;
+			}
+
+			if (hipIdx != -1 && idx > hipIdx) {
+				if (x < 0) {
+					legR.push_back(Vertex(x, l, z));
+				}
+				else {
+					legL.push_back(Vertex(x, l, z));
+				}
+			}
+
+			layerVerts.push_back(Vertex(x, l, z));
+		}
+		else {
+			vector<Vertex> ellipse;
+			if (idx == waistIdx) {
+				ellipse = generateUniformLayer(layerVerts);
+				waist = GetCircumference(ellipse);
+				circs.push_back(waist);
+				layers->append(ellipse);
+			}
+			else if (idx == hipIdx) {
+				vector<Vertex> a = layers->curr->value;
+				for (vector<Vertex>::iterator at = a.begin(); at != a.end(); at++)
+					(*at).y = l;
+				layerVerts.insert(layerVerts.end(), a.begin(), a.end());
+				ellipse = generateUniformLayer(layerVerts);
+				hipHeight = ellipse[0].y;
+				hip = GetCircumference(ellipse);
+				circs.push_back(hip);
+				layers->append(ellipse);
+			}
+			else if (hipIdx == -1 || l > crotchHeight) {
+				vector<Vertex> a = layers->curr->value;
+				for (vector<Vertex>::iterator at = a.begin(); at != a.end(); at++)
+					(*at).y = l;
+				layerVerts.insert(layerVerts.end(), a.begin(), a.end());
+				ellipse = generateUniformLayer(layerVerts);
+				if (ellipse.size() == 36)
+					layers->append(ellipse);
+			}
+			else if (hipIdx != -1 && idx > hipIdx) {
+				if (x < 0)
+					ellipse = generateUniformLayer(legR);
+				else 
+					ellipse = generateUniformLayer(legL);
+
+				//if (ellipse.size() == 36)
+				layers->append(ellipse);
+			}
+
+			idx++;
+			l -= diff * 2;
+			layerVerts.clear();
+		}
 	}
 
-	c.insert(c.end(), c2.begin(), c2.end());
-
-	return c;
+	// Auto Export
+	WriteToOBJ(PANTS);
 }
 
 vector<Vertex> Body::generateUniformLayer(vector<Vertex> v) {
@@ -1158,14 +907,16 @@ vector<Vertex> Body::generateUniformLayer(vector<Vertex> v) {
 	}
 	Vertex center = Vertex((minX.x + maxX.x)/2, yVal, (minZ.z + maxZ.z)/2);
 
-	float radius = (abs(minZ.z - center.z) > abs(maxZ.z - center.z))? abs(minZ.z - center.z) + 1 : abs(maxZ.z - center.z) + 1;
+	//float radius = (abs(minZ.z - center.z) > abs(maxZ.z - center.z))? abs(minZ.z - center.z) + 1 : abs(maxZ.z - center.z) + 1;
 
-	radius = 5;
+	float radius = 5;
 	vector<Vertex> circle;
 	for (int degree = 0; degree < 360; degree += 10) {
 		float radian = (degree * M_PI) / 180;
 		float x = -radius * cos(degree) + center.x;
 		float z = radius * sin(degree) + center.z;
+		//float x = -abs(maxX.x)*5 * cos(degree) + center.x;
+		//float z =  abs(maxZ.z)*5 * sin(degree) + center.z;
 		circle.push_back(Vertex(x, yVal, z));
 	}
 
@@ -1228,7 +979,8 @@ vector<Vertex> Body::generateUniformLayer(vector<Vertex> v) {
 		}
 	}
 
-	Vertex v1 = Vertex(1, yVal, 0);
+
+	Vertex v1 = Vertex(0, yVal, 1);
 	Vertex v2;
 	tuple<float, Vertex> set;
 	vector<tuple<float, Vertex>> tmp;
@@ -1236,13 +988,15 @@ vector<Vertex> Body::generateUniformLayer(vector<Vertex> v) {
 	for (vector<Vertex>::iterator it = intersections.begin(); it != intersections.end(); it++) {
 		v2 = (*it);
 		float angle = acos((v1.x*v2.x + v1.z*v2.z)/(sqrt(pow(v1.x, 2) + pow(v1.z, 2))*(sqrt(pow(v2.x, 2) + pow(v2.z, 2))))) * 180/M_PI; // degrees
-		if (v2.z < 0) angle = 360 - angle;
+		//if (v2.z < 0) angle = 360 - angle;
+		if (v2.x > 0) angle = 360 - angle;
 		tmp.push_back(make_tuple(angle, v2));
 	}
 
 	sort(tmp.begin(), tmp.end(), [](tuple<float, Vertex>& a, tuple<float, Vertex>& b) { return get<0>(a) < get<0>(b);  });
 
 	for (int i = 0; i < tmp.size(); i++) {
+	//for (int i = 0; i < 10; i++) {
 		uniformLayer.push_back(get<1>(tmp[i]));
 	}
 
@@ -1316,9 +1070,24 @@ void Body::SetSize(float b, float w, float h) {
 	hip = circs[hipIdx];
 }
 
-void Body::WriteToOBJ() {
+void Body::WriteToOBJ(int type) {
 	if (layers->length > 0) {
-		ofstream outfile("makehuman/Result/Dress.obj");
+		string root = "makehuman/Result/";
+		string filename;
+		if (type == DRESS) {
+			filename = "Dress.obj";
+		}
+		else if (type == TOP) {
+			filename = "Top.obj";
+		}
+		else if (type == SKIRT) {
+			filename = "Skirt.obj";
+		}
+		else if (type == PANTS) {
+			filename = "Pants.obj";
+		}
+
+		ofstream outfile(root + filename);
 		outfile << "# Generated OBJ file\n# By Minjoo Kang" << endl << endl << endl;
 
 		layers->curr = layers->head;
@@ -1351,6 +1120,8 @@ void Body::WriteToOBJ() {
 		}
 
 		outfile.close();
-		cout << "obj write ended" << endl;
+
+		ofstream endflag("makehuman/Result/dressform.txt");
+		endflag.close();
 	}
 }

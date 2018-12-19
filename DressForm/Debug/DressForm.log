@@ -1,56 +1,41 @@
 ﻿  Body.cpp
 e:\dressform\dressform\dressform\body.cpp(8): warning C4305: '=': truncation from 'double' to 'float'
 e:\dressform\dressform\dressform\body.cpp(98): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\dressform\dressform\dressform\body.cpp(186): warning C4305: 'initializing': truncation from 'double' to 'float'
-e:\dressform\dressform\dressform\body.cpp(187): warning C4305: 'initializing': truncation from 'double' to 'float'
-e:\dressform\dressform\dressform\body.cpp(188): warning C4305: 'initializing': truncation from 'double' to 'float'
-e:\dressform\dressform\dressform\body.cpp(291): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(366): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-e:\dressform\dressform\dressform\body.cpp(368): warning C4305: 'initializing': truncation from 'double' to 'float'
-e:\dressform\dressform\dressform\body.cpp(421): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
-e:\dressform\dressform\dressform\body.cpp(439): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(440): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(450): warning C4018: '>': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(497): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(515): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-e:\dressform\dressform\dressform\body.cpp(529): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-e:\dressform\dressform\dressform\body.cpp(565): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(571): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(579): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(611): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(612): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(621): warning C4018: '>': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(693): warning C4305: 'initializing': truncation from 'double' to 'float'
-e:\dressform\dressform\dressform\body.cpp(822): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(830): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-e:\dressform\dressform\dressform\body.cpp(832): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(842): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(852): warning C4305: '=': truncation from 'double' to 'float'
-e:\dressform\dressform\dressform\body.cpp(857): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(887): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(919): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(957): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(1026): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(1057): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-e:\dressform\dressform\dressform\body.cpp(1069): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-e:\dressform\dressform\dressform\body.cpp(1101): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\dressform\dressform\dressform\body.cpp(1109): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-e:\dressform\dressform\dressform\body.cpp(1166): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-e:\dressform\dressform\dressform\body.cpp(1167): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-e:\dressform\dressform\dressform\body.cpp(1168): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-e:\dressform\dressform\dressform\body.cpp(1172): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(1174): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(1238): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-e:\dressform\dressform\dressform\body.cpp(1245): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(1265): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(1275): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(1296): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(1306): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\body.cpp(1326): warning C4018: '<': signed/unsigned mismatch
-  DressFormDlg.cpp
-e:\dressform\dressform\dressform\dressformdlg.cpp(293): warning C4018: '<': signed/unsigned mismatch
-e:\dressform\dressform\dressform\dressformdlg.cpp(306): warning C4018: '<': signed/unsigned mismatch
-  Generating Code...
+e:\dressform\dressform\dressform\body.cpp(134): warning C4018: '<': signed/unsigned mismatch
+e:\dressform\dressform\dressform\body.cpp(218): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(219): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(220): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(249): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(250): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(251): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(280): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(281): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(282): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(298): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(299): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(300): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(354): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(489): warning C4018: '<': signed/unsigned mismatch
+e:\dressform\dressform\dressform\body.cpp(499): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+e:\dressform\dressform\dressform\body.cpp(501): warning C4018: '<': signed/unsigned mismatch
+e:\dressform\dressform\dressform\body.cpp(522): warning C4305: '=': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(527): warning C4018: '<': signed/unsigned mismatch
+e:\dressform\dressform\dressform\body.cpp(543): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(670): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(742): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(810): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dressform\dressform\dressform\body.cpp(915): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+e:\dressform\dressform\dressform\body.cpp(916): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+e:\dressform\dressform\dressform\body.cpp(917): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+e:\dressform\dressform\dressform\body.cpp(923): warning C4018: '<': signed/unsigned mismatch
+e:\dressform\dressform\dressform\body.cpp(925): warning C4018: '<': signed/unsigned mismatch
+e:\dressform\dressform\dressform\body.cpp(990): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+e:\dressform\dressform\dressform\body.cpp(998): warning C4018: '<': signed/unsigned mismatch
+e:\dressform\dressform\dressform\body.cpp(1019): warning C4018: '<': signed/unsigned mismatch
+e:\dressform\dressform\dressform\body.cpp(1029): warning C4018: '<': signed/unsigned mismatch
+e:\dressform\dressform\dressform\body.cpp(1050): warning C4018: '<': signed/unsigned mismatch
+e:\dressform\dressform\dressform\body.cpp(1060): warning C4018: '<': signed/unsigned mismatch
+e:\dressform\dressform\dressform\body.cpp(1095): warning C4018: '<': signed/unsigned mismatch
 Body.obj : warning LNK4258: directive '/entry:WinMainCRTStartup' not compatible with switch '/ENTRY:wWinMainCRTStartup'; ignored
 Camera.obj : warning LNK4258: directive '/entry:WinMainCRTStartup' not compatible with switch '/ENTRY:wWinMainCRTStartup'; ignored
 DressForm.obj : warning LNK4258: directive '/entry:WinMainCRTStartup' not compatible with switch '/ENTRY:wWinMainCRTStartup'; ignored
