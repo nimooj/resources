@@ -18,6 +18,7 @@ public:
 	float x, y, z;
 
 	bool isNull();
+	void setIdx(int);
 	void set();
 	void set(float, float, float);
 	void del();

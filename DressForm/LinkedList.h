@@ -32,6 +32,21 @@ public:
 	~LinkedList() {
 	}
 
+	void clear() {
+		if (length == 0)
+			return;
+
+		curr = head;
+		Node<T> *tmp;
+		while (curr) {
+			tmp = curr->next;
+			delete curr;
+			curr = tmp;
+
+			length--;
+		}
+	}
+
 	void append(T n) {
 		Node<T> *node = new Node<T>(n);
 

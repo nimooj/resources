@@ -14,6 +14,7 @@ Camera::Camera() {
 	cameraUp = cross(cameraDirection, cameraRight);
 
 	//view = lookAt(cameraPosition, -cameraDirection, cameraUp);
+	step = 0.3;
 }
 
 Camera::~Camera() {
@@ -69,7 +70,7 @@ void Camera::ViewUp() {
 	cameraDirection = normalize(cameraPosition - cameraTarget);
 	cameraFront = vec3(0, -1, 0);
 
-	vec3 up = vec3(0, 0, 1);
+	vec3 up = vec3(0, 0, -1);
 	cameraRight = normalize(cross(up, cameraDirection));
 	cameraUp = cross(cameraDirection, cameraRight);
 
@@ -79,19 +80,19 @@ void Camera::ViewUp() {
 void Camera::ZoomIn() {
 	switch (state) {
 	case FRONT:
-		cameraPosition.z -= 0.3;
+		cameraPosition.z -= step;
 		break;
 
 	case UP:
-		cameraPosition.y -= -0.3;
+		cameraPosition.y -= step;
 		break;
 
 	case RIGHT:
-		cameraPosition.x += 0.3;
+		cameraPosition.x += step;
 		break;
 
 	case LEFT:
-		cameraPosition.x -= 0.3;
+		cameraPosition.x -= step;
 		break;
 
 	default:
@@ -102,22 +103,101 @@ void Camera::ZoomIn() {
 void Camera::ZoomOut() {
 	switch (state) {
 	case FRONT:
-		cameraPosition.z += 0.3;
+		cameraPosition.z += step;
 		break;
 
 	case UP:
-		cameraPosition.y += -0.3;
+		cameraPosition.y += step;
 		break;
 
 	case RIGHT:
-		cameraPosition.x -= 0.3;
+		cameraPosition.x -= step;
 		break;
 
 	case LEFT:
-		cameraPosition.x += 0.3;
+		cameraPosition.x += step;
 		break;
 
 	default:
 		break;
 	}
+}
+
+void Camera::MoveUp() {
+	switch (state) {
+	case FRONT:
+		cameraPosition.y += step;
+		break;
+	case UP :
+		cameraPosition.z -= step;
+		break;
+	case RIGHT :
+		cameraPosition.y += step;
+		break;
+	case LEFT :
+		cameraPosition.y += step;
+		break;
+	default :
+		break;
+	}
+}
+
+void Camera::MoveRight() {
+	switch (state) {
+	case FRONT:
+		cameraPosition.x += step;
+		break;
+	case UP :
+		cameraPosition.x += step;
+		break;
+	case RIGHT :
+		cameraPosition.z += step;
+		break;
+	case LEFT :
+		cameraPosition.z -= step;
+		break;
+	default :
+		break;
+	}
+
+}
+
+void Camera::MoveLeft() {
+	switch (state) {
+	case FRONT:
+		cameraPosition.x -= step;
+		break;
+	case UP :
+		cameraPosition.x -= step;
+		break;
+	case RIGHT :
+		cameraPosition.z -= step;
+		break;
+	case LEFT :
+		cameraPosition.z += step;
+		break;
+	default :
+		break;
+	}
+
+}
+
+void Camera::MoveDown() {
+	switch (state) {
+	case FRONT:
+		cameraPosition.y -= step;
+		break;
+	case UP :
+		cameraPosition.z -= step;
+		break;
+	case RIGHT :
+		cameraPosition.y -= step;
+		break;
+	case LEFT :
+		cameraPosition.z += step;
+		break;
+	default :
+		break;
+	}
+
 }

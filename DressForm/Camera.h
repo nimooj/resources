@@ -22,6 +22,12 @@ class Camera {
 		void ZoomIn();
 		void ZoomOut();
 
+		void MoveUp();
+		void MoveDown();
+		void MoveRight();
+		void MoveLeft();
+
+		float step;
 		int state;
 		vec3 cameraPosition;
 		vec3 cameraTarget;

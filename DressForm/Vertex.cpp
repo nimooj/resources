@@ -53,6 +53,10 @@ bool Vertex::isNull() {
 	return nullFlag;
 }
 
+void Vertex::setIdx(int i) {
+	idx = i;
+}
+
 void Vertex::set() {
 	nullFlag = false;
 }
